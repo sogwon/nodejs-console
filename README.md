@@ -76,6 +76,18 @@ npm start
 └── README.md
 ```
 
+## GitHub에 올리기
+
+1. [GitHub](https://github.com/new)에서 새 저장소를 만든다 (이름 예: `work-log`).
+2. 로컬에서 원격을 추가하고 푸시한다:
+
+```bash
+git remote add origin https://github.com/사용자명/저장소이름.git
+git push -u origin main
+```
+
+(SSH를 쓰면 `git@github.com:사용자명/저장소이름.git` 형태로 추가하면 된다.)
+
 ## 참고
 
 - [CloudBase MySQL 연결](https://docs.cloudbase.net/en/cloud-function/resource-integration/mysql)

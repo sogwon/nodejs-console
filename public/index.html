@@ -4,67 +4,95 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="업무일지 - 일별 업무 기록을 작성하고 관리합니다">
-  <title>업무일지</title>
+  <title>업무일지 | Work Log</title>
   <link rel="stylesheet" href="/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="app">
-    <header class="header">
-      <h1 class="logo">업무일지</h1>
-      <button type="button" class="btn btn-primary" id="btnNew" aria-label="새 일지 작성">새 일지 작성</button>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <div class="brand">
+          <span class="brand-icon" aria-hidden="true">◇</span>
+          <span class="brand-name">업무일지</span>
+          <span class="brand-tag">Work Log</span>
+        </div>
+        <div class="topbar-actions">
+          <button type="button" class="btn btn-primary btn-top" id="btnNew" aria-label="새 일지 작성">
+            <span class="btn-icon">+</span>
+            새 일지 작성
+          </button>
+        </div>
+      </div>
     </header>
 
-    <main class="main">
-      <section class="list-section" id="listSection">
-        <div class="list-toolbar">
-          <label for="filterDate" class="sr-only">날짜로 필터</label>
-          <input type="date" id="filterDate" class="input-date" title="날짜 필터" aria-label="날짜 필터">
-          <button type="button" class="btn btn-ghost" id="btnRefresh" aria-label="목록 새로고침">새로고침</button>
-        </div>
-        <div class="list-loading hidden" id="listLoading" aria-live="polite">목록을 불러오는 중…</div>
-        <ul class="entry-list" id="entryList" aria-label="업무일지 목록"></ul>
-        <div class="list-footer" id="listFooter" aria-live="polite"></div>
-      </section>
+    <main class="main-content">
+      <div class="page-container">
+        <section class="list-section card-section" id="listSection">
+          <div class="page-header">
+            <h1 class="page-title">일지 목록</h1>
+            <div class="list-toolbar">
+              <label for="filterDate" class="sr-only">날짜로 필터</label>
+              <input type="date" id="filterDate" class="input-date" title="날짜 필터" aria-label="날짜 필터">
+              <button type="button" class="btn btn-ghost btn-sm" id="btnRefresh" aria-label="목록 새로고침">새로고침</button>
+            </div>
+          </div>
+          <div class="card list-card">
+            <div class="list-loading hidden" id="listLoading" aria-live="polite">목록을 불러오는 중…</div>
+            <ul class="entry-list" id="entryList" aria-label="업무일지 목록"></ul>
+            <div class="list-footer" id="listFooter" aria-live="polite"></div>
+          </div>
+        </section>
 
-      <section class="form-section hidden" id="formSection">
-        <form id="entryForm" class="entry-form" aria-labelledby="formTitle">
-          <h2 id="formTitle" class="form-title">새 일지 작성</h2>
-          <input type="hidden" id="entryId">
-          <div class="form-row">
-            <label for="logDate">날짜</label>
-            <input type="date" id="logDate" required aria-required="true">
+        <section class="form-section hidden" id="formSection">
+          <div class="page-header">
+            <h1 class="page-title" id="formTitle">새 일지 작성</h1>
           </div>
-          <div class="form-row">
-            <label for="title">제목</label>
-            <input type="text" id="title" placeholder="제목을 입력하세요" required maxlength="200" aria-required="true">
+          <div class="card form-card">
+            <form id="entryForm" class="entry-form" aria-labelledby="formTitle">
+              <input type="hidden" id="entryId">
+              <div class="form-row">
+                <label for="logDate">날짜</label>
+                <input type="date" id="logDate" required aria-required="true">
+              </div>
+              <div class="form-row">
+                <label for="title">제목</label>
+                <input type="text" id="title" placeholder="제목을 입력하세요" required maxlength="200" aria-required="true">
+              </div>
+              <div class="form-row">
+                <label for="content">내용</label>
+                <textarea id="content" rows="8" placeholder="업무 내용을 입력하세요"></textarea>
+              </div>
+              <div class="form-actions">
+                <button type="button" class="btn btn-ghost" id="btnCancel">취소</button>
+                <button type="submit" class="btn btn-primary" id="btnSubmit">저장</button>
+              </div>
+            </form>
           </div>
-          <div class="form-row">
-            <label for="content">내용</label>
-            <textarea id="content" rows="8" placeholder="업무 내용을 입력하세요"></textarea>
-          </div>
-          <div class="form-actions">
-            <button type="button" class="btn btn-ghost" id="btnCancel">취소</button>
-            <button type="submit" class="btn btn-primary" id="btnSubmit">저장</button>
-          </div>
-        </form>
-      </section>
+        </section>
 
-      <section class="detail-section hidden" id="detailSection">
-        <article class="entry-detail" id="entryDetail" aria-label="일지 상세"></article>
-        <div class="detail-meta" id="detailMeta"></div>
-        <div class="detail-actions">
-          <button type="button" class="btn btn-ghost" id="btnBackFromDetail">목록</button>
-          <button type="button" class="btn btn-secondary" id="btnEdit">수정</button>
-          <button type="button" class="btn btn-danger" id="btnDelete">삭제</button>
-        </div>
-      </section>
+        <section class="detail-section hidden" id="detailSection">
+          <div class="page-header detail-header">
+            <button type="button" class="btn btn-ghost btn-sm" id="btnBackFromDetail">← 목록</button>
+          </div>
+          <div class="card detail-card">
+            <article class="entry-detail" id="entryDetail" aria-label="일지 상세"></article>
+            <div class="detail-meta" id="detailMeta"></div>
+            <div class="detail-actions">
+              <button type="button" class="btn btn-secondary" id="btnEdit">수정</button>
+              <button type="button" class="btn btn-danger" id="btnDelete">삭제</button>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
+  </div>
 
-    <div class="modal hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalMessage">
-      <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal hidden" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalMessage">
+    <div class="modal-backdrop" id="modalBackdrop"></div>
+    <div class="modal-dialog">
       <div class="modal-content">
         <p class="modal-message" id="modalMessage"></p>
         <div class="modal-actions">

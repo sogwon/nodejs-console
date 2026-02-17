@@ -392,6 +392,38 @@ body {
   color: var(--text-muted);
 }
 
+/* 리치 에디터 (Quill) */
+.content-editor-wrap {
+  min-height: 200px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.content-editor-wrap .ql-toolbar {
+  border: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.content-editor-wrap .ql-container {
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  min-height: 180px;
+}
+
+.content-editor-wrap .ql-editor {
+  min-height: 180px;
+}
+
+.content-editor-wrap.ql-snow:focus-within {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
 .form-actions {
   display: flex;
   gap: 12px;
@@ -436,6 +468,66 @@ body {
   word-break: break-word;
   margin: 0;
   color: var(--text-secondary);
+}
+
+.entry-detail .content.content-richtext {
+  white-space: normal;
+}
+
+.entry-detail .content.content-richtext p {
+  margin: 0 0 0.75em 0;
+}
+
+.entry-detail .content.content-richtext p:last-child {
+  margin-bottom: 0;
+}
+
+.entry-detail .content.content-richtext ul,
+.entry-detail .content.content-richtext ol {
+  margin: 0 0 0.75em 0;
+  padding-left: 1.5em;
+}
+
+.entry-detail .content.content-richtext li {
+  margin-bottom: 0.25em;
+}
+
+.entry-detail .content.content-richtext h1,
+.entry-detail .content.content-richtext h2,
+.entry-detail .content.content-richtext h3 {
+  margin: 1em 0 0.5em 0;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.entry-detail .content.content-richtext h1 { font-size: 1.25rem; }
+.entry-detail .content.content-richtext h2 { font-size: 1.1rem; }
+.entry-detail .content.content-richtext h3 { font-size: 1rem; }
+
+.entry-detail .content.content-richtext a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.entry-detail .content.content-richtext blockquote {
+  margin: 0.75em 0;
+  padding-left: 1em;
+  border-left: 3px solid var(--border);
+  color: var(--text-muted);
+}
+
+.entry-detail .content.content-richtext code,
+.entry-detail .content.content-richtext pre {
+  font-family: ui-monospace, monospace;
+  font-size: 13px;
+}
+
+.entry-detail .content.content-richtext pre {
+  margin: 0.75em 0;
+  padding: 12px;
+  background: var(--bg-elevated);
+  border-radius: var(--radius);
+  overflow-x: auto;
 }
 
 .detail-meta {

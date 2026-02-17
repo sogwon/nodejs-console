@@ -11,7 +11,13 @@
   "engines": {
     "node": ">=12.0.0"
   },
-  "keywords": ["cloudbase", "tencent", "mysql", "work-log", "업무일지"],
+  "keywords": [
+    "cloudbase",
+    "tencent",
+    "mysql",
+    "work-log",
+    "업무일지"
+  ],
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.0.0",

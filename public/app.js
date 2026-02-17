@@ -10,7 +10,7 @@
   const entryId = document.getElementById("entryId");
   const logDate = document.getElementById("logDate");
   const titleInput = document.getElementById("title");
-  const contentInput = document.getElementById("content");
+  const contentEditorEl = document.getElementById("content-editor");
   const filterDate = document.getElementById("filterDate");
   const entryDetail = document.getElementById("entryDetail");
   const detailMeta = document.getElementById("detailMeta");
@@ -23,6 +23,73 @@
 
   let deleteTargetId = null;
   let currentEntry = null;
+  let quillEditor = null;
+
+  function getQuill() {
+    if (!quillEditor && contentEditorEl) {
+      quillEditor = new Quill(contentEditorEl, {
+        theme: "snow",
+        placeholder: "업무 내용을 입력하세요",
+        modules: {
+          toolbar: [
+            [{ header: [1, 2, 3, false] }],
+            ["bold", "italic", "underline", "strike"],
+            [{ list: "ordered" }, { list: "bullet" }],
+            ["link"],
+            [{ color: [] }, { background: [] }],
+            ["blockquote", "code-block"],
+            ["clean"],
+          ],
+        },
+      });
+    }
+    return quillEditor;
+  }
+
+  function setEditorContent(htmlOrText) {
+    const q = getQuill();
+    if (!q) return;
+    if (!htmlOrText || (typeof htmlOrText !== "string")) {
+      q.setText("");
+      return;
+    }
+    const trimmed = htmlOrText.trim();
+    if (/<[a-z][\s\S]*>/i.test(trimmed)) {
+      q.clipboard.dangerouslyPasteHTML(trimmed, "api");
+      q.setSelection(0, "silent");
+    } else {
+      q.setText(trimmed);
+    }
+  }
+
+  function getEditorContent() {
+    const q = getQuill();
+    if (!q) return "";
+    const html = q.root.innerHTML.trim();
+    return html === "<p><br></p>" ? "" : html;
+  }
+
+  function stripHtmlForPreview(html) {
+    if (!html) return "";
+    if (typeof DOMPurify !== "undefined") return DOMPurify.sanitize(html, { ALLOWED_TAGS: [] }).trim();
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return (div.textContent || div.innerText || "").trim();
+  }
+
+  function isHtmlContent(s) {
+    return typeof s === "string" && /<[a-z][\s\S]*>/i.test(s.trim());
+  }
+
+  function safeHtml(html) {
+    if (!html) return "";
+    if (typeof DOMPurify !== "undefined")
+      return DOMPurify.sanitize(html, {
+        ALLOWED_TAGS: ["p", "br", "strong", "b", "em", "i", "u", "s", "a", "ul", "ol", "li", "h1", "h2", "h3", "blockquote", "code", "pre", "span"],
+        ALLOWED_ATTR: ["href", "class", "style"],
+      });
+    return escapeHtml(html);
+  }
 
   function showView(name) {
     document.getElementById("listSection").classList.toggle("hidden", name !== "list");
@@ -86,7 +153,7 @@
         <li class="entry-item" data-id="${e.id}">
           <div class="date">${formatDate(e.log_date)}</div>
           <div class="title">${escapeHtml(e.title)}</div>
-          ${e.content ? `<div class="preview">${escapeHtml(e.content.slice(0, 80))}${e.content.length > 80 ? "…" : ""}</div>` : ""}
+          ${e.content ? `<div class="preview">${escapeHtml(stripHtmlForPreview(e.content).slice(0, 80))}${stripHtmlForPreview(e.content).length > 80 ? "…" : ""}</div>` : ""}
         </li>
       `
         )
@@ -119,17 +186,21 @@
     entryId.value = entry ? entry.id : "";
     logDate.value = entry ? formatDateInput(entry.log_date) : formatDateInput(new Date());
     titleInput.value = entry ? entry.title : "";
-    contentInput.value = entry ? entry.content || "" : "";
     if (formTitleEl) formTitleEl.textContent = entry ? "일지 수정" : "새 일지 작성";
     showView("form");
+    setTimeout(() => {
+      setEditorContent(entry ? entry.content || "" : "");
+    }, 50);
   }
 
   function openDetail(entry) {
     currentEntry = entry;
+    const contentRaw = entry.content || "";
+    const contentHtml = isHtmlContent(contentRaw) ? safeHtml(contentRaw) : escapeHtml(contentRaw);
     entryDetail.innerHTML = `
       <div class="date">${formatDate(entry.log_date)}</div>
       <div class="title">${escapeHtml(entry.title)}</div>
-      <div class="content">${escapeHtml(entry.content || "")}</div>
+      <div class="content content-richtext">${contentHtml}</div>
     `;
     if (detailMeta) {
       const parts = [];
@@ -195,7 +266,7 @@
     const payload = {
       log_date: logDate.value,
       title: titleInput.value.trim(),
-      content: contentInput.value.trim(),
+      content: getEditorContent(),
     };
     if (id) payload.id = id;
     const prevText = btnSubmit ? btnSubmit.textContent : "";
